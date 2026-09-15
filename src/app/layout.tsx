@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sua Turismo | Experiências no Maranhão",
-  description: "Passeios, roteiros e experiências turísticas com reserva rápida pelo WhatsApp."
+  title: "GLM - Transporte e Turismo | São Luís - MA",
+  description: "Transporte turístico, passeios e roteiros em São Luís e no Maranhão. Atendimento rápido pelo WhatsApp."
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR">
-      <body>{children}</body>
+    <html lang="pt-BR" className="scroll-smooth">
+      <body className="bg-white font-sans text-ink">{children}</body>
     </html>
   )
 }

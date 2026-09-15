@@ -1,12 +1,20 @@
+import { Instagram, MapPin, MessageCircle } from "lucide-react";
+import { getWhatsAppLink } from "@/lib/whatsapp";
+
 export function Footer() {
   return (
-    <footer className="footer">
-      <div className="container footer-inner">
+    <footer className="bg-[#0d251e] py-[42px] text-[#dbe7e2]">
+      <div className="mx-auto flex w-[min(1120px,calc(100%-40px))] items-center justify-between gap-[30px] max-[900px]:flex-wrap max-[900px]:items-start max-[620px]:w-[min(1120px,calc(100%-28px))] max-[620px]:flex-col">
         <div>
-          <strong>Sua Turismo</strong>
-          <p>Experiências inesquecíveis no Maranhão.</p>
+          <strong>GLM - Transporte e Turismo</strong>
+          <p className="text-sm text-[#98aaa4]">Conheça São Luís e o Maranhão com conforto e tranquilidade.</p>
         </div>
-        <p>© 2026 Sua Turismo. Todos os direitos reservados.</p>
+        <div className="grid gap-2.5 text-sm [&>*]:flex [&>*]:items-center [&>*]:gap-2 [&>*]:text-[#dbe7e2] [&_a]:transition-colors hover:[&_a]:text-white">
+          <a href={getWhatsAppLink("Olá! Gostaria de informações sobre os serviços da GLM - Transporte e Turismo.")} target="_blank" rel="noreferrer"><MessageCircle size={17}/> (98) 9 9105-7467</a>
+          <a href="https://www.instagram.com/glmturismo01/" target="_blank" rel="noreferrer"><Instagram size={17}/> @glmturismo01</a>
+          <span><MapPin size={17}/> Rua Bacurituba, 01 - Turu, São Luís - MA</span>
+        </div>
+        <p className="text-sm text-[#98aaa4]">© 2026 GLM - Transporte e Turismo.</p>
       </div>
     </footer>
   )
