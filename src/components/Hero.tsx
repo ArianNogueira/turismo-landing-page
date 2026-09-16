@@ -3,8 +3,19 @@ import { getWhatsAppLink } from "@/lib/whatsapp";
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[760px] items-center bg-[url('https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1800&q=85')] bg-cover bg-center text-white max-[900px]:min-h-[680px]" id="inicio">
-      <div className="absolute inset-0 bg-gradient-to-r from-[rgba(8,29,24,.84)] to-[rgba(8,29,24,.32)]" />
+    <section className="relative flex min-h-[760px] items-center overflow-hidden bg-green bg-[url('https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1800&q=85')] bg-cover bg-center text-white max-[900px]:min-h-[680px]" id="inicio">
+      <video
+        className="absolute inset-0 h-full w-full object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+      >
+        <source src="/video_lençóis.mp4" type="video/mp4" />
+      </video>
+      <div className="absolute inset-0 bg-gradient-to-r from-[rgba(8,29,24,.88)] via-[rgba(8,29,24,.58)] to-[rgba(8,29,24,.30)]" />
       <div className="relative mx-auto w-[min(1120px,calc(100%-40px))] pt-20 max-[620px]:w-[min(1120px,calc(100%-28px))]">
         <span className="text-xs font-extrabold uppercase tracking-[.18em]">Transporte e Turismo em São Luís</span>
         <h1 className="my-[18px] max-w-[850px] text-[clamp(3rem,5vw,5.8rem)] font-bold leading-[.96] max-[620px]:text-[2.6rem]">Conheça o Maranhão com conforto, segurança e experiências inesquecíveis.</h1>
