@@ -1,4 +1,5 @@
-import { ArrowRight, MessageCircle } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, CalendarCheck, MessageCircle } from "lucide-react";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
 export function Hero() {
@@ -24,8 +25,11 @@ export function Hero() {
           <a className="inline-flex items-center justify-center gap-[9px] rounded-full bg-white px-5 py-3.5 font-bold text-green transition-transform hover:-translate-y-0.5" href="#passeios">Ver passeios 
             <ArrowRight size={18} />
           </a>
+          <Link className="inline-flex items-center justify-center gap-[9px] rounded-full border border-white/55 px-5 py-3.5 font-bold text-white backdrop-blur-lg transition-transform hover:-translate-y-0.5" href="/agendamento">
+            <CalendarCheck size={18} /> Fazer agendamento
+          </Link>
           <a className="inline-flex items-center justify-center gap-[9px] rounded-full border border-white/55 px-5 py-3.5 font-bold text-white backdrop-blur-lg transition-transform hover:-translate-y-0.5" href={getWhatsAppLink("Olá! Quero montar meu roteiro de viagem.")} target="_blank" rel="noreferrer">
-            <MessageCircle size={18} /> Montar meu roteiro
+            <MessageCircle size={18} /> WhatsApp
           </a>
         </div>
       </div>
