@@ -47,7 +47,7 @@ export function Testimonials() {
   }
 
   return (
-    <section className="bg-[#f8faf9] py-[110px] max-[620px]:py-[78px]" id="depoimentos">
+    <section className="bg-[#f3f8fa] py-[110px] max-[620px]:py-[78px]" id="depoimentos">
       <div className="mx-auto w-[min(1120px,calc(100%-40px))] max-[620px]:w-[min(1120px,calc(100%-28px))]">
         <div className="mx-auto mb-[42px] max-w-[700px] text-center">
           <h2 className="my-3 text-[clamp(2.2rem,4vw,3.7rem)] font-bold leading-[1.05]">
@@ -62,7 +62,7 @@ export function Testimonials() {
           <button
             type="button"
             onClick={() => scrollTestimonials("previous")}
-            className="grid h-11 w-11 place-items-center rounded-full border border-[#dce4e0] bg-white text-green transition hover:-translate-y-0.5 hover:border-green-light hover:text-green-light"
+            className="grid h-11 w-11 place-items-center rounded-full border border-[#c9dde3] bg-white text-green transition hover:-translate-y-0.5 hover:border-green-light hover:text-green-light"
             aria-label="Ver depoimentos anteriores"
           >
             <ChevronLeft size={21} />
@@ -83,11 +83,11 @@ export function Testimonials() {
         >
           {testimonials.map((testimonial, index) => (
             <article
-              className="flex min-h-[285px] snap-start flex-col rounded-[22px] border border-[#e5ebe8] bg-white p-7 shadow-[0_14px_45px_rgba(26,50,42,.07)]"
+              className="flex min-h-[285px] snap-start flex-col rounded-[22px] border border-[#d7e7eb] bg-white p-7 shadow-[0_14px_45px_rgba(44,109,144,.07)]"
               key={`${testimonial.name}-${index}`}
             >
               <div className="mb-6 flex items-start justify-between gap-4">
-                <div className="flex gap-1 text-[#f5b301]" aria-label={`${testimonial.rating} de 5 estrelas`}>
+                <div className="flex gap-1 text-peach" aria-label={`${testimonial.rating} de 5 estrelas`}>
                   {Array.from({ length: testimonial.rating }).map((_, starIndex) => (
                     <Star key={starIndex} size={18} fill="currentColor" aria-hidden="true" />
                   ))}
@@ -99,7 +99,7 @@ export function Testimonials() {
                 “{testimonial.comment}”
               </blockquote>
 
-              <div className="mt-6 border-t border-[#edf0ee] pt-5">
+              <div className="mt-6 border-t border-[#e2edf0] pt-5">
                 <strong className="block text-ink">{testimonial.name}</strong>
                 <span className="mt-1 block text-sm text-muted">Avaliação no Google</span>
               </div>

@@ -3,7 +3,12 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "GLM - Transporte e Turismo | São Luís - MA",
-  description: "Transporte turístico, passeios e roteiros em São Luís e no Maranhão. Atendimento rápido pelo WhatsApp."
+  description: "Transporte turístico, passeios e roteiros em São Luís e no Maranhão. Atendimento rápido pelo WhatsApp.",
+  icons: {
+    icon: "/Favicon.png",
+    shortcut: "/Favicon.png",
+    apple: "/Favicon.png",
+  }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -10,9 +10,9 @@ const items = [
 export function Benefits() {
   return ( 
     <section className="relative z-[4] -mt-[54px] max-[620px]:-mt-7">
-      <div className="mx-auto grid w-[min(1120px,calc(100%-40px))] grid-cols-4 overflow-hidden rounded-[22px] bg-white shadow-[0_20px_60px_rgba(25,45,38,.14)] max-[900px]:grid-cols-2 max-[620px]:w-[min(1120px,calc(100%-28px))] max-[620px]:grid-cols-1">
+      <div className="mx-auto grid w-[min(1120px,calc(100%-40px))] grid-cols-4 overflow-hidden rounded-[22px] bg-white shadow-[0_20px_60px_rgba(44,109,144,.14)] max-[900px]:grid-cols-2 max-[620px]:w-[min(1120px,calc(100%-28px))] max-[620px]:grid-cols-1">
         {items.map(({icon: Icon, title, text}) =>
-        <article key={title} className="flex gap-4 border-r border-[#edf0ee] px-6 py-7 last:border-0 max-[620px]:border-b max-[620px]:border-r-0">
+        <article key={title} className="flex gap-4 border-r border-[#e2edf0] px-6 py-7 last:border-0 max-[620px]:border-b max-[620px]:border-r-0">
           <Icon className="shrink-0 text-green-light" size={28}/>
           <div>
             <h3 className="mb-[7px] text-base font-bold">{title}</h3>

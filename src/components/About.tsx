@@ -4,7 +4,7 @@ export function About() {
   return (
     <section className="bg-sand py-[110px] max-[620px]:py-[78px]" id="sobre">
       <div className="mx-auto grid w-[min(1120px,calc(100%-40px))] grid-cols-2 items-center gap-[70px] max-[900px]:grid-cols-1 max-[900px]:gap-9 max-[620px]:w-[min(1120px,calc(100%-28px))]">
-        <div className="h-[520px] w-full overflow-hidden rounded-[32px] shadow-[0_20px_50px_rgba(20,59,50,.14)] max-[620px]:h-[390px]">
+        <div className="h-[520px] w-full overflow-hidden rounded-[32px] shadow-[0_20px_50px_rgba(44,109,144,.14)] max-[620px]:h-[390px]">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d249.1264338441697!2d-44.21852263946889!3d-2.499326934133799!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMsKwMjknNTcuNi4yIlc!5e0!3m2!1spt-BR!2sbr!4v1789498063070!5m2!1spt-BR!2sbr"
             title="Localização da GLM Transporte e Turismo"
