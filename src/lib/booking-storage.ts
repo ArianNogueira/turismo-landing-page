@@ -1,4 +1,4 @@
-export const BOOKINGS_STORAGE_KEY = "glm-booking-requests";
+﻿import { databaseError, getSupabase } from "@/lib/supabase";
 
 export type BookingRequest = {
   id: string; code: string; createdAt: string; status: "pending" | "completed";
@@ -7,31 +7,36 @@ export type BookingRequest = {
   reference: string; notes: string;
 };
 
-export function getBookings(): BookingRequest[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const bookings = JSON.parse(localStorage.getItem(BOOKINGS_STORAGE_KEY) || "[]") as Array<BookingRequest & { code?: string }>;
-    return bookings.map((booking, index) => ({
-      ...booking,
-      code: booking.code || formatBookingCode(bookings.length - index),
-    }));
+export type NewBooking = Omit<BookingRequest, "id" | "code" | "createdAt" | "status">;
+type BookingRow = Omit<BookingRequest, "createdAt" | "time" | "passengers"> & {
+  created_at: string; time: string | null; passengers: number;
+};
+
+export async function getBookings(): Promise<BookingRequest[]> {
+  const bookings: BookingRequest[] = [];
+  const pageSize = 100;
+  for (let offset = 0; ; offset += pageSize) {
+    const { data, error } = await getSupabase().from("bookings").select("*")
+      .eq("status", "pending").order("created_at", { ascending: false }).order("id")
+      .range(offset, offset + pageSize - 1);
+    if (error) throw databaseError(error);
+    const rows = data as BookingRow[];
+    bookings.push(...rows.map(({ created_at, time, passengers, ...row }) => ({
+      ...row, createdAt: created_at, time: time?.slice(0, 5) || "", passengers: String(passengers),
+    })));
+    if (rows.length < pageSize) return bookings;
   }
-  catch { return []; }
 }
 
-export function saveBooking(booking: BookingRequest) {
-  localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify([booking, ...getBookings()]));
-}
-
-export function formatBookingCode(sequence: number) {
-  return `GML-${String(sequence).padStart(4, "0")}`;
-}
-
-export function getNextBookingCode() {
-  const highestSequence = getBookings().reduce((highest, booking) => {
-    const sequence = Number(booking.code.match(/^GML-(\d+)$/)?.[1] || 0);
-    return Math.max(highest, sequence);
-  }, 0);
-
-  return formatBookingCode(highestSequence + 1);
+export async function saveBooking(booking: NewBooking) {
+  const passengers = Number(booking.passengers);
+  if (!Number.isInteger(passengers) || passengers < 1) throw new Error("Informe um n\u00famero v\u00e1lido de passageiros.");
+  // Public users can submit requests, but cannot read customer data.
+  const { error } = await getSupabase().from("bookings").insert({
+    name: booking.name.trim(), phone: booking.phone.trim(), email: booking.email.trim(),
+    service: booking.service.trim(), date: booking.date, time: booking.time || null,
+    passengers, origin: booking.origin.trim(), destination: booking.destination.trim(),
+    reference: booking.reference.trim(), notes: booking.notes.trim(),
+  });
+  if (error) throw databaseError(error);
 }

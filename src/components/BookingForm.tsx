@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft, CalendarDays, CheckCircle2 } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { getNextBookingCode, saveBooking } from "@/lib/booking-storage";
+import { saveBooking } from "@/lib/booking-storage";
 
 const fieldClass = "mt-2 w-full rounded-xl border border-[#c9dde3] bg-white px-4 py-3 text-ink outline-none transition placeholder:text-[#8198a4] focus:border-green-light focus:ring-4 focus:ring-green-light/10";
 const labelClass = "text-sm font-bold text-ink";
@@ -19,22 +19,29 @@ const travelOptions = [
 
 export function BookingForm() {
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const today = new Date();
   const minimumDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submitting) return;
     const form = event.currentTarget;
     const data = new FormData(form);
     const value = (name: string) => String(data.get(name) || "");
-    saveBooking({
-      id: crypto.randomUUID(), code: getNextBookingCode(), createdAt: new Date().toISOString(), status: "pending",
-      name: value("name"), phone: value("phone"), email: value("email"), service: value("route"),
-      date: value("date"), time: value("time"), passengers: value("passengers"),
-      origin: value("origin"), destination: value("destination"), reference: value("reference"), notes: value("notes"),
-    });
-    form.reset();
-    setSent(true);
+    setSubmitting(true); setError("");
+    try {
+      await saveBooking({
+        name: value("name"), phone: value("phone"), email: value("email"), service: value("route"),
+        date: value("date"), time: value("time"), passengers: value("passengers"),
+        origin: value("origin"), destination: value("destination"), reference: value("reference"), notes: value("notes"),
+      });
+      form.reset();
+      setSent(true);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Não foi possível enviar o agendamento. Tente novamente.");
+    } finally { setSubmitting(false); }
   }
 
   function handleTravelChange(event: ChangeEvent<HTMLSelectElement>) {
@@ -93,7 +100,7 @@ export function BookingForm() {
               <label className={labelClass}>Local de saída *<input className={fieldClass} name="origin" required /></label>
               <label className={labelClass}>Destino ou passeio *<input className={fieldClass} name="destination" required /></label>
               <label className={`${labelClass} col-span-2 max-[700px]:col-span-1`}>Observações<textarea className={`${fieldClass} min-h-28 resize-y`} name="notes" placeholder="Bagagens, crianças, acessibilidade ou outras informações importantes." /></label>
-              <div className="col-span-2 max-[700px]:col-span-1"><button className="w-full rounded-full bg-green-light px-6 py-4 font-extrabold text-white hover:bg-peach transition hover:-translate-y-0.5 hover:shadow-lg" type="submit">Enviar solicitação de agendamento</button><p className="mt-3 text-center text-xs text-muted">Os dados serão usados pela GLM para preparar seu pré-voucher.</p></div>
+              <div className="col-span-2 max-[700px]:col-span-1">{error && <p role="alert" className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}<button disabled={submitting} className="w-full rounded-full bg-green-light px-6 py-4 font-extrabold text-white hover:bg-peach transition hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60" type="submit">{submitting ? "Enviando…" : "Enviar solicitação de agendamento"}</button><p className="mt-3 text-center text-xs text-muted">Os dados serão usados pela GLM para preparar seu pré-voucher.</p></div>
             </form>
           )}
         </div>

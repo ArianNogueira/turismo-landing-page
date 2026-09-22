@@ -1,5 +1,5 @@
-import { VoucherGenerator } from "@/components/VoucherGenerator";
+import { VoucherAccess } from "@/components/VoucherAccess";
 
 export default function VoucherPage() {
-  return <VoucherGenerator />;
+  return <VoucherAccess />;
 }

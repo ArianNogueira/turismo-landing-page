@@ -4,7 +4,7 @@ export type Voucher = {
   code: string; client: string; phone: string; service: string; date: string;
   time: string; passengers: string; origin: string; destination: string;
   vehicle: string; driver: string; price: string; payment: string; notes: string;
-  issuedAt: string; arrivalTime: string; route: string;
+  issuedAt: string; arrivalTime: string;
 };
 
 export const standardNotes = "Sujeito à disponibilidade. Para confirmação, envie o comprovante de depósito para o nosso e-mail. Em caso de dúvidas, entre em contato pelo telefone.";
@@ -44,21 +44,38 @@ export async function createVoucherPdf(v: Voucher) {
     box(columns[i], y, columns[i + 1] - columns[i], 7, true); pdf.text(label, columns[i] + 2, y + 4.5);
   });
   y += 7; pdf.setFont("times", "normal");
-  const route = v.route.trim() || [v.service, [v.origin, v.destination].filter(Boolean).join(" / ")].filter(Boolean).join(": ");
-  const routeLines = lines([route || "—", v.time && `Saída ${v.time}.`, v.arrivalTime && `Previsão de chegada ${v.arrivalTime}.`, v.vehicle && `Veículo: ${v.vehicle}.`, v.driver && `Motorista: ${v.driver}.`].filter(Boolean).join(" "), 90);
+  // The built-in Times font cannot encode arrows: jsPDF emits UTF-16 bytes
+  // that render as extra spacing and overflow despite the measured line width.
+  const normalizeRoute = (text: string) => text.normalize("NFC")
+    .replace(/(?:[→➜➝➞➔⇒!]|->)+/g, " para ")
+    .replace(/\s+/g, " ").trim();
+  const itinerary = [v.origin, v.destination].map(normalizeRoute).filter(Boolean).join(" para ");
+  const service = normalizeRoute(v.service);
+  // Older bookings stored the itinerary in the service field.
+  const serviceIsItinerary = service.toLocaleLowerCase("pt-BR") === itinerary.toLocaleLowerCase("pt-BR")
+    || service.replace(/\s*\/\s*/g, " para ").toLocaleLowerCase("pt-BR") === itinerary.toLocaleLowerCase("pt-BR");
+  const route = [!service || serviceIsItinerary ? "Transfer Privativo" : service, itinerary].filter(Boolean).join(": ");
+  pdf.setFontSize(7); pdf.setCharSpace(0);
+  const routeLines = lines([`${route}${v.time ? "," : "."}`, v.time && `Saída ${v.time}.`, v.arrivalTime && `Previsão de chegada ${v.arrivalTime}.`, v.vehicle && `Veículo: ${v.vehicle}.`, v.driver && `Motorista: ${v.driver}.`].filter(Boolean).join(" ").replace(/\s+/g, " "), columns[2] - columns[1] - 6);
   const height = Math.max(11, routeLines.length * 3.3 + 5);
   if (y + height > 175) throw new Error("A descrição da rota está muito longa. Resuma para manter o voucher em uma página.");
   for (let i = 0; i < 4; i++) box(columns[i], y, columns[i + 1] - columns[i], height);
-  pdf.text(formatDate(v.date), 16, y + 5); pdf.text(routeLines, 49, y + 4.5);
+  pdf.text(routeLines, 49, y + 4.5, { lineHeightFactor: 1.2, charSpace: 0 });
+  pdf.setFontSize(8);
+  pdf.text(formatDate(v.date), 16, y + 5);
   pdf.text(v.passengers || "—", 154.5, y + 5, { align: "center" });
-  const total = priceInCents(v.price); const deposit = Math.round(total / 2); const surcharge = Number(v.passengers || 0) * 1000;
+  const base = priceInCents(v.price);
+  const isCredit = v.payment.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes("credito");
+  const surcharge = isCredit ? Math.max(0, Math.trunc(Number(v.passengers) || 0)) * 1000 : 0;
+  const total = base + surcharge;
+  const deposit = Math.round(base / 2);
   pdf.text(money(total), 194, y + 5, { align: "right" });
   y += height + 2; box(14, y, 182, 7, true); pdf.setFont("times", "bold");
   pdf.text("VALOR TOTAL", 16, y + 4.5); pdf.text(money(total), 194, y + 4.5, { align: "right" }); y += 9;
   const paragraphs = [
     "Forma de Pagamento: Transferência Bancária / Depósito ou Cartão de Crédito (só de 1x).",
-    `Pagamento via Depósito / Transferência (Valor Base: ${money(total)}): 50% (${money(deposit)}) no agendamento e 50% (${money(total - deposit)}) ao embarcar.`,
-    `Pagamento via Cartão de Crédito (só de 1x, com acréscimo): acréscimo de R$ 10,00 por passageiro. Total de acréscimo: ${money(surcharge)} (${v.passengers || "0"} passageiros x R$ 10,00). O valor total para pagamento com cartão é de ${money(total + surcharge)}.`,
+    `Pagamento via Depósito / Transferência (Valor Base: ${money(base)}): 50% (${money(deposit)}) no agendamento e 50% (${money(base - deposit)}) ao embarcar.`,
+    ...(isCredit ? [`Pagamento via Cartão de Crédito (só de 1x, com acréscimo): acréscimo de R$ 10,00 por passageiro. Total de acréscimo: ${money(surcharge)} (${v.passengers || "0"} passageiros x R$ 10,00). O valor total para pagamento com cartão é de ${money(total)}.`] : []),
     ...(v.payment ? [`Forma de pagamento escolhida: ${v.payment}.`] : []),
     `Observações: ${standardNotes}`,
     ...(v.notes.trim() ? [`Observações da reserva: ${v.notes.trim()}`] : []),
