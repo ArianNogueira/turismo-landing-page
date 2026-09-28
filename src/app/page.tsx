@@ -11,17 +11,17 @@ import { WhatsAppButton } from "@/components/WhatsAppButton";
 export default function Home() {
   return (
     <>
-      <Navbar/>
+      <Navbar />
       <main>
-        <Hero/>
-        <Benefits/>
-        <Tours/>
-        <About/>
-        <Testimonials/>
-        <CTA/>
+        <Hero />
+        <Benefits />
+        <Tours />
+        <About />
+        {/* <Testimonials/> */}
+        <CTA />
       </main>
-      <Footer/>
-      <WhatsAppButton/>
+      <Footer />
+      <WhatsAppButton />
     </>
-  )
+  );
 }

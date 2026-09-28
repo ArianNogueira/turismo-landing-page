@@ -47,14 +47,18 @@ export function Testimonials() {
   }
 
   return (
-    <section className="bg-[#f3f8fa] py-[110px] max-[620px]:py-[78px]" id="depoimentos">
+    <section
+      className="bg-[#f3f8fa] py-[110px] max-[620px]:py-[78px]"
+      id="depoimentos"
+    >
       <div className="mx-auto w-[min(1120px,calc(100%-40px))] max-[620px]:w-[min(1120px,calc(100%-28px))]">
         <div className="mx-auto mb-[42px] max-w-[700px] text-center">
           <h2 className="my-3 text-[clamp(2.2rem,4vw,3.7rem)] font-bold leading-[1.05]">
             O que nossos clientes dizem
           </h2>
           <p className="leading-[1.7] text-muted">
-            Experiências compartilhadas por quem já viajou com a GLM Transporte e Turismo.
+            Experiências compartilhadas por quem já viajou com a GLM Transporte
+            e Turismo.
           </p>
         </div>
 
@@ -87,12 +91,26 @@ export function Testimonials() {
               key={`${testimonial.name}-${index}`}
             >
               <div className="mb-6 flex items-start justify-between gap-4">
-                <div className="flex gap-1 text-peach" aria-label={`${testimonial.rating} de 5 estrelas`}>
-                  {Array.from({ length: testimonial.rating }).map((_, starIndex) => (
-                    <Star key={starIndex} size={18} fill="currentColor" aria-hidden="true" />
-                  ))}
+                <div
+                  className="flex gap-1 text-peach"
+                  aria-label={`${testimonial.rating} de 5 estrelas`}
+                >
+                  {Array.from({ length: testimonial.rating }).map(
+                    (_, starIndex) => (
+                      <Star
+                        key={starIndex}
+                        size={18}
+                        fill="currentColor"
+                        aria-hidden="true"
+                      />
+                    ),
+                  )}
                 </div>
-                <Quote className="text-green-light/25" size={34} aria-hidden="true" />
+                <Quote
+                  className="text-green-light/25"
+                  size={34}
+                  aria-hidden="true"
+                />
               </div>
 
               <blockquote className="flex-1 leading-[1.7] text-muted">
@@ -101,7 +119,9 @@ export function Testimonials() {
 
               <div className="mt-6 border-t border-[#e2edf0] pt-5">
                 <strong className="block text-ink">{testimonial.name}</strong>
-                <span className="mt-1 block text-sm text-muted">Avaliação no Google</span>
+                <span className="mt-1 block text-sm text-muted">
+                  Avaliação no Google
+                </span>
               </div>
             </article>
           ))}

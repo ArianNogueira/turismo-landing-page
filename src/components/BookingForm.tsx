@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { TravelRouteSelect } from "@/components/TravelRouteSelect";
 import { ArrowLeft, CalendarDays, CheckCircle2 } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { saveBooking } from "@/lib/booking-storage";
+import { notifyBooking } from "@/lib/booking-notification";
+import { getWhatsAppLink } from "@/lib/whatsapp";
 
 const fieldClass = "mt-2 w-full rounded-xl border border-[#c9dde3] bg-white px-4 py-3 text-ink outline-none transition placeholder:text-[#8198a4] focus:border-green-light focus:ring-4 focus:ring-green-light/10";
 const labelClass = "text-sm font-bold text-ink";
@@ -19,41 +22,52 @@ const travelOptions = [
 
 export function BookingForm() {
   const [sent, setSent] = useState(false);
+  const [notificationFailed, setNotificationFailed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [selectedRoute, setSelectedRoute] = useState("");
+  const [origin, setOrigin] = useState("");
+  const [destination, setDestination] = useState("");
   const today = new Date();
   const minimumDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitting) return;
+    if (!selectedRoute) {
+      setError("Selecione a rota da viagem.");
+      document.getElementById("booking-route")?.focus();
+      return;
+    }
     const form = event.currentTarget;
     const data = new FormData(form);
     const value = (name: string) => String(data.get(name) || "");
-    setSubmitting(true); setError("");
+    setSubmitting(true); setError(""); setNotificationFailed(false);
     try {
-      await saveBooking({
+      const booking = {
         name: value("name"), phone: value("phone"), email: value("email"), service: value("route"),
         date: value("date"), time: value("time"), passengers: value("passengers"),
         origin: value("origin"), destination: value("destination"), reference: value("reference"), notes: value("notes"),
-      });
+      };
+      await saveBooking(booking);
+      const notified = await notifyBooking(booking);
+      setNotificationFailed(!notified);
       form.reset();
+      setSelectedRoute("");
+      setOrigin("");
+      setDestination("");
       setSent(true);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Não foi possível enviar o agendamento. Tente novamente.");
     } finally { setSubmitting(false); }
   }
 
-  function handleTravelChange(event: ChangeEvent<HTMLSelectElement>) {
-    const option = travelOptions.find((travel) => travel.label === event.target.value);
-    const form = event.target.form;
-
-    if (!option || !form) return;
-
-    const origin = form.elements.namedItem("origin") as HTMLInputElement;
-    const destination = form.elements.namedItem("destination") as HTMLInputElement;
-    origin.value = option.origin;
-    destination.value = option.destination;
+  function handleTravelChange(route: string) {
+    const option = travelOptions.find((travel) => travel.label === route);
+    if (!option) return;
+    setSelectedRoute(option.label);
+    setOrigin(option.origin);
+    setDestination(option.destination);
   }
 
   function formatPhone(event: ChangeEvent<HTMLInputElement>) {
@@ -81,6 +95,12 @@ export function BookingForm() {
               <CheckCircle2 className="mx-auto text-green-light" size={54} />
               <h2 className="mt-5 text-3xl font-bold">Solicitação recebida!</h2>
               <p className="mx-auto mt-3 max-w-xl leading-relaxed text-muted">Seus dados foram enviados para a preparação do pré-voucher. A GLM entrará em contato após completar as informações.</p>
+              {notificationFailed && (
+                <p role="status" className="mx-auto mt-4 max-w-xl rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
+                  Seu pedido está salvo, mas não foi possível confirmar o aviso por e-mail à equipe. Não é necessário enviar novamente.
+                  {" "}<a className="font-bold underline" href={getWhatsAppLink("Olá! Já registrei meu agendamento no site e gostaria de confirmar o recebimento.")} target="_blank" rel="noreferrer">Se preferir, fale com a GLM pelo WhatsApp.</a>
+                </p>
+              )}
               <button onClick={() => setSent(false)} className="mt-7 rounded-full bg-green px-6 py-3 font-bold text-white">Fazer outro agendamento</button>
             </div>
           ) : (
@@ -91,14 +111,9 @@ export function BookingForm() {
               <label className={labelClass}>Data da viagem *<input className={fieldClass} name="date" type="date" min={minimumDate} required /></label>
               <label className={labelClass}>Horário desejado<input className={fieldClass} name="time" type="time" /></label>
               <label className={labelClass}>Número de passageiros *<input className={fieldClass} name="passengers" type="number" min="1" required /></label>
-              <label className={`${labelClass} col-span-2 max-[700px]:col-span-1`}>Rota da viagem *
-                <select className={fieldClass} name="route" required defaultValue="" onChange={handleTravelChange}>
-                  <option value="" disabled>Selecione a rota</option>
-                  {travelOptions.map((travel) => <option key={travel.label} value={travel.label}>{travel.label}</option>)}
-                </select>
-              </label>
-              <label className={labelClass}>Local de saída *<input className={fieldClass} name="origin" required /></label>
-              <label className={labelClass}>Destino ou passeio *<input className={fieldClass} name="destination" required /></label>
+              <TravelRouteSelect options={travelOptions.map(travel => travel.label)} value={selectedRoute} onChange={handleTravelChange} />
+              <label className={labelClass}>Local de saída *<input className={fieldClass} name="origin" required value={origin} onChange={(event) => setOrigin(event.target.value)} /></label>
+              <label className={labelClass}>Destino ou passeio *<input className={fieldClass} name="destination" required value={destination} onChange={(event) => setDestination(event.target.value)} /></label>
               <label className={`${labelClass} col-span-2 max-[700px]:col-span-1`}>Observações<textarea className={`${fieldClass} min-h-28 resize-y`} name="notes" placeholder="Bagagens, crianças, acessibilidade ou outras informações importantes." /></label>
               <div className="col-span-2 max-[700px]:col-span-1">{error && <p role="alert" className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}<button disabled={submitting} className="w-full rounded-full bg-green-light px-6 py-4 font-extrabold text-white hover:bg-peach transition hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60" type="submit">{submitting ? "Enviando…" : "Enviar solicitação de agendamento"}</button><p className="mt-3 text-center text-xs text-muted">Os dados serão usados pela GLM para preparar seu pré-voucher.</p></div>
             </form>

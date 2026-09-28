@@ -1,0 +1,2 @@
+# URL antiga de servicos encontrada nos resultados de busca.
+RedirectMatch 301 ^/servicos/?$ https://glmtransfereturismo.com/

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { ArrowLeft, Download, Eye, FolderOpen, X } from "lucide-react";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { BookingNotifications } from "@/components/BookingNotifications";
 import { BookingRequest, getBookings } from "@/lib/booking-storage";
 
 import { createVoucherPdf, Voucher } from "@/lib/voucher-pdf";
@@ -30,6 +31,7 @@ function formatCurrencyInput(event: FormEvent<HTMLInputElement>) {
 
 
 export function VoucherGenerator() {
+  const bookingSelect = useRef<HTMLSelectElement>(null);
   const [bookings, setBookings] = useState<BookingRequest[]>([]);
   const [voucher, setVoucher] = useState<Voucher>(emptyVoucher);
   const [formKey, setFormKey] = useState("empty");
@@ -67,12 +69,25 @@ export function VoucherGenerator() {
   useEffect(() => {
     let cancelled = false;
     setVoucher(current => ({ ...current, issuedAt: new Date().toLocaleDateString("sv-SE") }));
-    Promise.all([getBookings(), getVouchers()]).then(([requests, saved]) => {
-      if (!cancelled) { setBookings(requests); setSavedVouchers(saved); }
-    }).catch(cause => {
-      if (!cancelled) setDataError(cause instanceof Error ? cause.message : "Não foi possível carregar os dados.");
-    }).finally(() => { if (!cancelled) setLoadingData(false); });
-    return () => { cancelled = true; };
+    let refreshing = false;
+    async function load() {
+      if (refreshing) return;
+      refreshing = true;
+      try {
+        const [requests, saved] = await Promise.all([getBookings(), getVouchers()]);
+        if (!cancelled) { setBookings(requests); setSavedVouchers(saved); setDataError(""); }
+      } catch (cause) {
+        if (!cancelled) setDataError(cause instanceof Error ? cause.message : "Não foi possível carregar os dados.");
+      } finally {
+        refreshing = false;
+        if (!cancelled) setLoadingData(false);
+      }
+    }
+    void load();
+    const timer = setInterval(() => { if (!document.hidden) void load(); }, 30000);
+    const onFocus = () => { void load(); };
+    window.addEventListener("focus", onFocus);
+    return () => { cancelled = true; clearInterval(timer); window.removeEventListener("focus", onFocus); };
   }, []);
 
   async function refreshData() {
@@ -125,13 +140,17 @@ export function VoucherGenerator() {
   return (
     <main className="min-h-screen bg-[#e8f2f5] py-8">
       <div className="mx-auto w-[min(1280px,calc(100%-40px))] max-[620px]:w-[min(1280px,calc(100%-28px))]">
-        <div className="mb-6 flex items-center justify-between gap-4"><Link href="/" className="inline-flex items-center gap-2 font-bold text-green-light"><ArrowLeft size={18} /> Voltar</Link><span className="rounded-full bg-[#fbe9dc] px-4 py-2 text-xs font-bold text-[#94401f]">Área operacional — acesso restrito</span></div>
+        <div className="mb-6 flex items-center justify-between gap-4"><Link href="/" className="inline-flex items-center gap-2 font-bold text-green-light"><ArrowLeft size={18} /> Voltar</Link><div className="flex items-center gap-3"><span className="rounded-full bg-[#fbe9dc] px-4 py-2 text-xs font-bold text-[#94401f]">Área operacional — acesso restrito</span><BookingNotifications bookings={bookings} loading={loadingData} error={dataError} onSelect={(id) => {
+          selectBooking(id);
+          bookingSelect.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+          bookingSelect.current?.focus({ preventScroll: true });
+        }} /></div></div>
         <div className="grid grid-cols-[420px_1fr] gap-7 max-[1000px]:grid-cols-1">
           <section className="rounded-[22px] bg-white p-6 shadow-sm">
             <div className="mb-6"><span className="text-xs font-extrabold uppercase tracking-[.18em] text-green-light">Gerador</span><h1 className="mt-2 text-3xl font-bold">Preparar voucher</h1><p className="mt-2 text-sm leading-relaxed text-muted">Selecione uma solicitação e complete valor e dados operacionais.</p></div>
             <button onClick={refreshData} disabled={loadingData} className="mb-4 text-sm font-bold text-green-light disabled:opacity-60">{loadingData ? "Carregando dados…" : "Atualizar agendamentos e vouchers"}</button>
             {dataError && <p role="alert" className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{dataError}</p>}
-            <label className="mb-5 block text-sm font-bold">Solicitação pendente<select disabled={loadingData || !!dataError} className={fieldClass} onChange={(e) => selectBooking(e.target.value)} defaultValue=""><option value="">Preenchimento manual</option>{bookings.map((b) => <option key={b.id} value={b.id}>{b.code} — {b.name} — {b.date}</option>)}</select></label>
+            <label className="mb-5 block text-sm font-bold">Solicitação pendente<select ref={bookingSelect} disabled={loadingData || !!dataError} className={fieldClass} onChange={(e) => selectBooking(e.target.value)} value={bookings.some(item => item.id === bookingId) ? bookingId! : ""}><option value="">Preenchimento manual</option>{bookings.map((b) => <option key={b.id} value={b.id}>{b.code} — {b.name} — {b.date}</option>)}</select></label>
             {!loadingData && !dataError && bookings.length === 0 && <p className="mb-5 rounded-xl bg-sand p-3 text-xs leading-relaxed text-muted">Nenhuma solicitação pendente encontrada.</p>}
             <form key={formKey} onChange={update} onSubmit={(event) => event.preventDefault()} className="grid grid-cols-2 gap-4">
               <Field name="code" label="Código" value={voucher.code} /><Field name="date" label="Data" type="date" value={voucher.date} />

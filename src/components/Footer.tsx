@@ -1,4 +1,4 @@
-import { Instagram, MapPin, MessageCircle } from "lucide-react";
+import { Instagram, Mail, MapPin, MessageCircle } from "lucide-react";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
 export function Footer() {
@@ -12,6 +12,7 @@ export function Footer() {
         <div className="grid gap-2.5 text-sm [&>*]:flex [&>*]:items-center [&>*]:gap-2 [&>*]:text-[#e2f0f3] [&_a]:transition-colors hover:[&_a]:text-peach">
           <a href={getWhatsAppLink("Olá! Gostaria de informações sobre os serviços da GLM - Transporte e Turismo.")} target="_blank" rel="noreferrer"><MessageCircle size={17}/> (98) 9 9105-7467</a>
           <a href="https://www.instagram.com/glmturismo01/" target="_blank" rel="noreferrer"><Instagram size={17}/> @glmturismo01</a>
+          <a href="mailto:glm4lopes@gmail.com"><Mail size={17}/> glm4lopes@gmail.com</a>
           <span><MapPin size={17}/> Rua Bacurituba, 01 - Turu, São Luís - MA</span>
         </div>
         <p className="text-sm text-[#8fc1cf]">© 2026 GLM - Transporte e Turismo.</p>
