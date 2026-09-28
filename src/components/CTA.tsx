@@ -11,9 +11,9 @@ export function CTA() {
           <h2 className="my-3 text-[clamp(2.2rem,4vw,3.7rem)] font-bold leading-[1.05]">Pronto para montar seu roteiro?</h2>
           <p className="max-w-[650px] text-[#dceef2]">Fale com a GLM pelo WhatsApp e receba atendimento para escolher seu passeio ou transporte.</p>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <Link className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-peach px-5 py-3.5 font-bold text-white transition hover:-translate-y-0.5 hover:bg-green-light" href="/agendamento">Solicitar agendamento</Link>
-          <a className="inline-flex items-center justify-center gap-[9px] whitespace-nowrap rounded-full border border-white/40 px-5 py-3.5 font-bold text-white transition-transform hover:-translate-y-0.5" href={getWhatsAppLink("Olá! Quero montar meu roteiro e gostaria de mais informações.")} target="_blank" rel="noreferrer">
+        <div className="flex flex-wrap gap-3 max-[620px]:w-full max-[620px]:[&_a]:w-full">
+          <Link className="inline-flex items-center justify-center text-center rounded-full bg-peach px-5 py-3.5 font-bold text-white transition hover:-translate-y-0.5 hover:bg-green-light" href="/agendamento">Solicitar agendamento</Link>
+          <a className="inline-flex items-center justify-center gap-[9px] text-center rounded-full border border-white/40 px-5 py-3.5 font-bold text-white transition-transform hover:-translate-y-0.5" href={getWhatsAppLink("Olá! Quero montar meu roteiro e gostaria de mais informações.")} target="_blank" rel="noreferrer">
             <MessageCircle size={19}/> WhatsApp
           </a>
         </div>

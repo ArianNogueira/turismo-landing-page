@@ -83,7 +83,7 @@ export function BookingNotifications({ bookings, loading, error, onSelect }: {
           className="absolute right-0 top-14 z-40 w-[min(380px,calc(100vw-28px))] overflow-hidden rounded-2xl border border-[#d7e7eb] bg-white shadow-2xl">
           <header className="flex items-center justify-between gap-3 border-b border-[#d7e7eb] p-4">
             <div><h2 id="booking-notifications-title" className="font-bold text-ink">Agendamentos pendentes</h2><p className="mt-1 text-xs text-muted">Pedidos mais recentes primeiro</p></div>
-            <button ref={closeButton} type="button" aria-label="Fechar notificações" onClick={() => { setOpen(false); trigger.current?.focus(); }} className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#f3f8fa] text-green"><X size={18} /></button>
+            <button ref={closeButton} type="button" aria-label="Fechar notificações" onClick={() => { setOpen(false); trigger.current?.focus(); }} className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#f3f8fa] text-green"><X size={18} /></button>
           </header>
           <div className="max-h-[min(420px,60vh)] overflow-y-auto p-3">
             {loading && <p role="status" className="p-3 text-sm text-muted">Carregando…</p>}

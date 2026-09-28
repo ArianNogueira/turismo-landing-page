@@ -49,15 +49,15 @@ export function VoucherAccess() {
 
   if (loading) return <main className="min-h-screen bg-[#e8f2f5] p-10 text-center">Verificando acesso…</main>;
   if (user?.app_metadata?.glm_role === "operator") return <>
-    <div className="flex items-center justify-end gap-4 bg-white px-6 py-3 text-sm">
+    <div className="flex flex-wrap items-center justify-end gap-4 bg-white px-6 py-3 text-sm">
       {error && <span role="alert" className="text-red-700">{error}</span>}
-      <span>{user.email}</span><button disabled={busy} onClick={signOut} className="font-bold text-green">Sair</button>
+      <span className="min-w-0 break-all">{user.email}</span><button disabled={busy} onClick={signOut} className="font-bold text-green">Sair</button>
     </div>
     <VoucherGenerator key={user.id} />
   </>;
 
   return <main className="grid min-h-screen place-items-center bg-[#e8f2f5] p-6">
-    <section className="w-full max-w-md rounded-3xl bg-white p-8 shadow-sm">
+    <section className="w-full max-w-md rounded-3xl bg-white p-8 shadow-sm max-[480px]:p-5">
       <h1 className="text-3xl font-bold">Acesso da equipe</h1>
       <p className="mt-3 text-sm text-muted">Entre para consultar agendamentos e preparar vouchers.</p>
       {error && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}

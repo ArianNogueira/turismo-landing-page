@@ -19,11 +19,11 @@ export function Hero() {
       >
         <source src="/video_lencois.mp4" type="video/mp4" />
       </video>
-      <div className="relative mx-auto w-[min(1120px,calc(100%-40px))] pt-20 max-[620px]:w-[min(1120px,calc(100%-28px))]">
+      <div className="relative mx-auto w-[min(1120px,calc(100%-40px))] pb-28 pt-28 max-[620px]:w-[min(1120px,calc(100%-28px))]">
         <span className="text-xs font-extrabold uppercase tracking-[.18em] text-white">
           Transporte e Turismo em São Luís
         </span>
-        <h1 className="my-[18px] max-w-[850px] text-[clamp(3rem,5vw,5.8rem)] font-bold leading-[.96] max-[620px]:text-[2.6rem]">
+        <h1 className="my-[18px] max-w-[850px] text-[clamp(3rem,5vw,5.8rem)] font-bold leading-[.96] max-[620px]:text-[clamp(2rem,8.5vw,2.6rem)]">
           Conheça o Maranhão com conforto, segurança e experiências
           inesquecíveis.
         </h1>

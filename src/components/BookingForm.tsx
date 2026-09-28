@@ -8,8 +8,8 @@ import { saveBooking } from "@/lib/booking-storage";
 import { notifyBooking } from "@/lib/booking-notification";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
-const fieldClass = "mt-2 w-full rounded-xl border border-[#c9dde3] bg-white px-4 py-3 text-ink outline-none transition placeholder:text-[#8198a4] focus:border-green-light focus:ring-4 focus:ring-green-light/10";
-const labelClass = "text-sm font-bold text-ink";
+const fieldClass = "mt-2 min-w-0 w-full rounded-xl border border-[#c9dde3] bg-white px-4 py-3 text-ink outline-none transition placeholder:text-[#8198a4] focus:border-green-light focus:ring-4 focus:ring-green-light/10";
+const labelClass = "min-w-0 text-sm font-bold text-ink";
 
 const travelOptions = [
   { label: "São Luís → Barreirinhas", origin: "São Luís", destination: "Barreirinhas" },

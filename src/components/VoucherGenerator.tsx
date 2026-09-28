@@ -9,7 +9,7 @@ import { BookingRequest, getBookings } from "@/lib/booking-storage";
 import { createVoucherPdf, Voucher } from "@/lib/voucher-pdf";
 import { getVouchers, saveVoucher, type SavedVoucher } from "@/lib/voucher-storage";
 const emptyVoucher: Voucher = { code: "", client: "", phone: "", service: "Transfer Privativo", date: "", time: "", passengers: "", origin: "", destination: "", vehicle: "", driver: "", price: "", payment: "", notes: "", issuedAt: "", arrivalTime: "" };
-const fieldClass = "mt-1.5 w-full rounded-xl border border-[#c9dde3] bg-white px-3.5 py-2.5 text-sm outline-none focus:border-green-light focus:ring-4 focus:ring-green-light/10";
+const fieldClass = "mt-1.5 min-w-0 w-full rounded-xl border border-[#c9dde3] bg-white px-3.5 py-2.5 text-sm outline-none focus:border-green-light focus:ring-4 focus:ring-green-light/10";
 
 function fromBooking(booking: BookingRequest): Voucher {
   return { ...emptyVoucher, code: booking.code, client: booking.name, phone: booking.phone, service: "Transfer Privativo", date: booking.date, time: booking.time, passengers: booking.passengers, origin: booking.origin, destination: booking.destination, notes: booking.notes };
@@ -140,19 +140,19 @@ export function VoucherGenerator() {
   return (
     <main className="min-h-screen bg-[#e8f2f5] py-8">
       <div className="mx-auto w-[min(1280px,calc(100%-40px))] max-[620px]:w-[min(1280px,calc(100%-28px))]">
-        <div className="mb-6 flex items-center justify-between gap-4"><Link href="/" className="inline-flex items-center gap-2 font-bold text-green-light"><ArrowLeft size={18} /> Voltar</Link><div className="flex items-center gap-3"><span className="rounded-full bg-[#fbe9dc] px-4 py-2 text-xs font-bold text-[#94401f]">Área operacional — acesso restrito</span><BookingNotifications bookings={bookings} loading={loadingData} error={dataError} onSelect={(id) => {
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4"><Link href="/" className="inline-flex items-center gap-2 font-bold text-green-light"><ArrowLeft size={18} /> Voltar</Link><div className="flex items-center gap-3"><span className="rounded-full bg-[#fbe9dc] px-4 py-2 text-xs font-bold text-[#94401f]">Área operacional — acesso restrito</span><BookingNotifications bookings={bookings} loading={loadingData} error={dataError} onSelect={(id) => {
           selectBooking(id);
           bookingSelect.current?.scrollIntoView({ behavior: "smooth", block: "center" });
           bookingSelect.current?.focus({ preventScroll: true });
         }} /></div></div>
-        <div className="grid grid-cols-[420px_1fr] gap-7 max-[1000px]:grid-cols-1">
+        <div className="grid grid-cols-[420px_minmax(0,1fr)] gap-7 max-[1000px]:grid-cols-1">
           <section className="rounded-[22px] bg-white p-6 shadow-sm">
             <div className="mb-6"><span className="text-xs font-extrabold uppercase tracking-[.18em] text-green-light">Gerador</span><h1 className="mt-2 text-3xl font-bold">Preparar voucher</h1><p className="mt-2 text-sm leading-relaxed text-muted">Selecione uma solicitação e complete valor e dados operacionais.</p></div>
             <button onClick={refreshData} disabled={loadingData} className="mb-4 text-sm font-bold text-green-light disabled:opacity-60">{loadingData ? "Carregando dados…" : "Atualizar agendamentos e vouchers"}</button>
             {dataError && <p role="alert" className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{dataError}</p>}
             <label className="mb-5 block text-sm font-bold">Solicitação pendente<select ref={bookingSelect} disabled={loadingData || !!dataError} className={fieldClass} onChange={(e) => selectBooking(e.target.value)} value={bookings.some(item => item.id === bookingId) ? bookingId! : ""}><option value="">Preenchimento manual</option>{bookings.map((b) => <option key={b.id} value={b.id}>{b.code} — {b.name} — {b.date}</option>)}</select></label>
             {!loadingData && !dataError && bookings.length === 0 && <p className="mb-5 rounded-xl bg-sand p-3 text-xs leading-relaxed text-muted">Nenhuma solicitação pendente encontrada.</p>}
-            <form key={formKey} onChange={update} onSubmit={(event) => event.preventDefault()} className="grid grid-cols-2 gap-4">
+            <form key={formKey} onChange={update} onSubmit={(event) => event.preventDefault()} className="grid grid-cols-2 gap-4 max-[480px]:grid-cols-1 max-[480px]:[&>label]:col-span-1 [&>label]:min-w-0">
               <Field name="code" label="Código" value={voucher.code} /><Field name="date" label="Data" type="date" value={voucher.date} />
               <Field name="client" label="Nome do responsável" value={voucher.client} wide /><Field name="phone" label="Contato" value={voucher.phone} /><Field name="passengers" label="Passageiros" type="number" value={voucher.passengers} />
               <Field name="issuedAt" label="Data de emissão" type="date" value={voucher.issuedAt} /><Field name="arrivalTime" label="Previsão de chegada" type="time" value={voucher.arrivalTime} /><Field name="time" label="Horário" type="time" value={voucher.time} />
@@ -168,24 +168,24 @@ export function VoucherGenerator() {
             <div className="mb-4 flex flex-wrap justify-end gap-3"><button onClick={() => { setModalOpen(true); void refreshData(); }} className="inline-flex items-center gap-2 rounded-full border border-[#c9dde3] bg-white px-5 py-3 font-bold text-green"><FolderOpen size={18} /> Ver vouchers</button><button disabled={generating || loadingData || !!dataError} onClick={() => generatePdf(voucher)} className="inline-flex items-center gap-2 rounded-full bg-green px-5 py-3 font-bold text-white disabled:opacity-60"><Download size={18} /> {generating ? "Salvando voucher…" : "Gerar voucher em PDF"}</button></div>
             <p className="mb-3 text-sm text-muted">Modelo padrão GLM • A4. Entrada de 50% e acréscimo do cartão calculados automaticamente.</p>
             {error && <p role="alert" className="mb-4 rounded-xl bg-red-50 p-4 text-sm text-red-700">{error}</p>}
-            {previewUrl ? <iframe title="Prévia do voucher padrão GLM" src={previewUrl} className="h-[900px] w-full rounded-lg border-0 bg-white shadow-lg" /> : <div className="rounded-xl bg-white p-10 text-muted">{error ? "Ajuste os dados para visualizar o voucher." : "Preparando prévia…"}</div>}
+            {previewUrl ? <iframe title="Prévia do voucher padrão GLM" src={previewUrl} className="h-[min(900px,75dvh)] w-full rounded-lg border-0 bg-white shadow-lg" /> : <div className="rounded-xl bg-white p-10 text-muted">{error ? "Ajuste os dados para visualizar o voucher." : "Preparando prévia…"}</div>}
           </section>
         </div>
       </div>
       {modalOpen && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-[#153d52]/70 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="saved-vouchers-title" onMouseDown={(event) => { if (event.target === event.currentTarget) setModalOpen(false); }}>
-          <section className="max-h-[85vh] w-full max-w-2xl overflow-hidden rounded-[24px] bg-white shadow-2xl">
-            <header className="flex items-center justify-between border-b border-[#d7e7eb] px-6 py-5"><div><span className="text-xs font-extrabold uppercase tracking-[.18em] text-green-light">Histórico</span><h2 id="saved-vouchers-title" className="mt-1 text-2xl font-bold">Vouchers salvos</h2></div><button onClick={() => setModalOpen(false)} className="grid h-10 w-10 place-items-center rounded-full bg-[#e8f2f5] text-muted hover:text-ink" aria-label="Fechar"><X size={20} /></button></header>
+          <section className="max-h-[90dvh] w-full max-w-2xl overflow-y-auto overscroll-contain rounded-[24px] bg-white shadow-2xl">
+            <header className="flex items-center justify-between border-b border-[#d7e7eb] px-6 py-5"><div><span className="text-xs font-extrabold uppercase tracking-[.18em] text-green-light">Histórico</span><h2 id="saved-vouchers-title" className="mt-1 text-2xl font-bold">Vouchers salvos</h2></div><button onClick={() => setModalOpen(false)} className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#e8f2f5] text-muted hover:text-ink" aria-label="Fechar"><X size={20} /></button></header>
             <div className="p-6">
               {loadingData && <p role="status" className="mb-4 text-sm text-muted">Carregando vouchers…</p>}
               {dataError && <p role="alert" className="mb-4 text-sm text-red-700">{dataError}</p>}
               <input value={modalFilter} onChange={(event) => setModalFilter(event.target.value)} className="mb-5 w-full rounded-full border border-[#c9dde3] bg-[#f3f8fa] px-5 py-3 text-sm outline-none focus:border-green-light" placeholder="Filtrar por nome ou código" aria-label="Filtrar vouchers por nome ou código" />
               <div className="max-h-[52vh] space-y-3 overflow-y-auto pr-1">
                 {filteredSavedVouchers.map((item) => (
-                  <article key={`${item.code}-${item.savedAt}`} className="flex items-center gap-4 rounded-2xl border border-[#d7e7eb] p-4">
-                    <div className="min-w-0 flex-1"><strong className="block truncate text-ink">{item.client || "Cliente sem nome"}</strong><span className="mt-1 block text-sm text-muted">{item.code || "Sem código"} • {formatDate(item.date)}</span></div>
-                    <button onClick={() => viewSavedVoucher(item)} className="grid h-10 w-10 place-items-center rounded-full border border-[#c9dde3] text-green hover:border-green-light" title="Visualizar voucher" aria-label={`Visualizar voucher ${item.code}`}><Eye size={18} /></button>
-                    <button onClick={() => generatePdf(item, false)} className="grid h-10 w-10 place-items-center rounded-full bg-green text-white hover:bg-green-light" title="Baixar voucher" aria-label={`Baixar voucher ${item.code}`}><Download size={18} /></button>
+                  <article key={`${item.code}-${item.savedAt}`} className="flex items-center gap-2 rounded-2xl border border-[#d7e7eb] p-4">
+                    <div className="min-w-0 flex-1"><strong className="block truncate text-ink">{item.client || "Cliente sem nome"}</strong><span className="mt-1 block break-words text-sm text-muted">{item.code || "Sem código"} • {formatDate(item.date)}</span></div>
+                    <button onClick={() => viewSavedVoucher(item)} className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[#c9dde3] text-green hover:border-green-light" title="Visualizar voucher" aria-label={`Visualizar voucher ${item.code}`}><Eye size={18} /></button>
+                    <button onClick={() => generatePdf(item, false)} className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-green text-white hover:bg-green-light" title="Baixar voucher" aria-label={`Baixar voucher ${item.code}`}><Download size={18} /></button>
                   </article>
                 ))}
                 {!loadingData && !dataError && filteredSavedVouchers.length === 0 && <p className="rounded-2xl bg-sand p-6 text-center text-sm text-muted">Nenhum voucher salvo encontrado.</p>}

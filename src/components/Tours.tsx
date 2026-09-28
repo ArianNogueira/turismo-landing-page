@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { tours } from "@/data/tours";
 import { getWhatsAppLink } from "@/lib/whatsapp";
@@ -13,6 +14,7 @@ export function Tours() {
               <img className="block h-[270px] w-full object-cover" src={tour.image} alt={tour.title} />
               <div className="p-6"><div className="flex items-center gap-[7px] text-[.85rem] font-bold text-green-light">Circuito</div><h3 className="my-3 text-[1.45rem] font-bold">{tour.title}</h3><p className="min-h-[78px] leading-relaxed text-muted max-[620px]:min-h-0">{tour.description}</p>
                 <a className="mt-2 inline-flex items-center gap-2 font-extrabold text-green-light" href={getWhatsAppLink(`Olá! Tenho interesse no passeio ${tour.title}. Pode me passar mais informações?`)} target="_blank" rel="noreferrer"><MessageCircle size={18}/> Reservar pelo WhatsApp</a>
+                <Link className="mt-4 flex w-full items-center justify-center rounded-full bg-peach px-5 py-3.5 text-center font-bold text-white transition hover:-translate-y-0.5 hover:bg-green-light focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-green-light/30" href="/agendamento">Faça seu agendamento</Link>
               </div>
             </article>
           ))}
