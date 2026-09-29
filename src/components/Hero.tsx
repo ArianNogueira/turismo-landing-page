@@ -19,9 +19,9 @@ export function Hero() {
       >
         <source src="/video_lencois.mp4" type="video/mp4" />
       </video>
-      <div className="relative mx-auto w-[min(1120px,calc(100%-40px))] pb-28 pt-28 max-[620px]:w-[min(1120px,calc(100%-28px))]">
+      <div className="relative mx-auto w-[min(1120px,calc(100%-40px))] pb-24 pt-44 max-[620px]:w-[min(1120px,calc(100%-28px))] max-[620px]:pb-16 max-[620px]:pt-36">
         <span className="text-xs font-extrabold uppercase tracking-[.18em] text-white">
-          Transporte e Turismo em São Luís
+          Transfer e Turismo em São Luís
         </span>
         <h1 className="my-[18px] max-w-[850px] text-[clamp(3rem,5vw,5.8rem)] font-bold leading-[.96] max-[620px]:text-[clamp(2rem,8.5vw,2.6rem)]">
           Conheça o Maranhão com conforto, segurança e experiências
@@ -29,7 +29,7 @@ export function Hero() {
         </h1>
         <p className="max-w-[650px] text-[1.15rem] leading-[1.7] text-[#eaf5f7] max-[620px]:text-base">
           Passeios, roteiros e transporte turístico com atendimento direto da
-          GLM - Transporte e Turismo.
+          GLM - Transfer e Turismo.
         </p>
         <div className="mt-8 flex flex-wrap gap-3 max-[620px]:[&_a]:w-full">
           <a

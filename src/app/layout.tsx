@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "GLM - Transporte e Turismo | São Luís - MA",
+  title: "GLM - Transfer e Turismo | São Luís - MA",
   description: "Transporte turístico, passeios e roteiros em São Luís e no Maranhão. Atendimento rápido pelo WhatsApp.",
   icons: {
-    icon: "/Favicon.png",
-    shortcut: "/Favicon.png",
-    apple: "/Favicon.png",
+    icon: { url: "/favicon.ico", type: "image/x-icon" },
+    shortcut: "/favicon.ico",
   }
 };
 

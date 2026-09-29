@@ -31,20 +31,22 @@ export function Navbar() {
 
   return (
     <header ref={headerRef} className="absolute top-0 z-40 w-full text-white" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setMenuOpen(false); }}>
-      <div className="mx-auto flex h-[88px] w-[min(1120px,calc(100%-40px))] items-center gap-7 max-[620px]:w-[min(1120px,calc(100%-28px))]">
+      <div className="relative mx-auto flex w-[min(1120px,calc(100%-40px))] items-center gap-7 py-6 max-[620px]:w-[min(1120px,calc(100%-28px))] max-[620px]:gap-4 max-[620px]:py-5">
         <a className="mr-auto shrink-0 text-xl font-extrabold" href="#inicio" onClick={() => setMenuOpen(false)}>
           <Image
             src="/Logo.png"
             alt="Logo da GLM Transporte e Turismo"
-            width={90}
-            height={40}
+            width={497}
+            height={502}
+            className="block h-auto w-24 max-[620px]:w-20"
+            priority
           />
         </a>
         <button ref={menuButton} type="button" onClick={() => setMenuOpen(current => !current)} aria-expanded={menuOpen} aria-controls="main-navigation" aria-label={menuOpen ? "Fechar menu" : "Abrir menu"} className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full bg-green/80 text-white max-[900px]:inline-flex">
           {menuOpen ? <X /> : <Menu />}
         </button>
         <nav id="main-navigation" onClick={() => setMenuOpen(false)}
-          className={`flex gap-[26px] text-[.95rem] [&_a]:opacity-90 hover:[&_a]:opacity-100 max-[900px]:absolute max-[900px]:left-[14px] max-[900px]:right-[14px] max-[900px]:top-[80px] max-[900px]:max-h-[calc(100dvh-96px)] max-[900px]:overflow-y-auto max-[900px]:flex-col max-[900px]:gap-1 max-[900px]:rounded-2xl max-[900px]:bg-green max-[900px]:p-3 max-[900px]:shadow-xl max-[900px]:[&_a]:rounded-lg max-[900px]:[&_a]:px-4 max-[900px]:[&_a]:py-3 ${menuOpen ? "" : "max-[900px]:hidden"}`}
+          className={`flex gap-[26px] text-[.95rem] [&_a]:opacity-90 hover:[&_a]:opacity-100 max-[900px]:absolute max-[900px]:left-0 max-[900px]:right-0 max-[900px]:top-full max-[900px]:max-h-[calc(100dvh-162px)] max-[900px]:overflow-y-auto max-[900px]:flex-col max-[900px]:gap-1 max-[900px]:rounded-2xl max-[900px]:bg-green max-[900px]:p-3 max-[900px]:shadow-xl max-[900px]:[&_a]:rounded-lg max-[900px]:[&_a]:px-4 max-[900px]:[&_a]:py-3 ${menuOpen ? "" : "max-[900px]:hidden"}`}
           aria-label="Navegação principal"
         >
           <a href="#inicio">Início</a>
