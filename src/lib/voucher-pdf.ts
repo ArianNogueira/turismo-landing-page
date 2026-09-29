@@ -16,8 +16,25 @@ export async function createVoucherPdf(v: Voucher) {
   const pdf = new jsPDF({ unit: "mm", format: "a4" });
   const response = await fetch("/Logo.png");
   if (!response.ok) throw new Error("Não foi possível carregar o logotipo.");
-  const logo = new Uint8Array(await response.arrayBuffer());
-  pdf.addImage(logo, "PNG", 87, 7, 36, 36);
+  const logoUrl = URL.createObjectURL(await response.blob());
+  try {
+    const logo = new Image();
+    logo.src = logoUrl;
+    await logo.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = logo.naturalWidth;
+    canvas.height = logo.naturalHeight;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Não foi possível preparar o logotipo do voucher.");
+    // Flatten transparency before embedding: JPEG has no alpha channel,
+    // so PDF viewers cannot render the transparent background as black.
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(logo, 0, 0);
+    pdf.addImage(canvas.toDataURL("image/jpeg", 1), "JPEG", 87, 7, 36, 36);
+  } finally {
+    URL.revokeObjectURL(logoUrl);
+  }
   pdf.setFont("times", "normal"); pdf.setFontSize(8);
   pdf.text("Endereço: Rua Bacarituba, Casa 08 - Planalto Turu 2 - São Luís / MA", 105, 44, { align: "center" });
   pdf.text("CNPJ: 61.560.370/0001-30 | E-mail: glmtope@gmail.com | Telefone: (98) 9 9105-7467", 105, 48, { align: "center" });
