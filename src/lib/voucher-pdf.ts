@@ -31,7 +31,12 @@ export async function createVoucherPdf(v: Voucher) {
     context.fillStyle = "#ffffff";
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.drawImage(logo, 0, 0);
-    pdf.addImage(canvas.toDataURL("image/jpeg", 1), "JPEG", 87, 7, 36, 36);
+    // Keep the logo within a 28 mm header area, clear of the text below.
+    const logoScale = Math.min(28 / canvas.width, 28 / canvas.height);
+    const logoWidth = canvas.width * logoScale;
+    const logoHeight = canvas.height * logoScale;
+    const logoX = (pdf.internal.pageSize.getWidth() - logoWidth) / 2;
+    pdf.addImage(canvas.toDataURL("image/jpeg", 1), "JPEG", logoX, 7, logoWidth, logoHeight);
   } finally {
     URL.revokeObjectURL(logoUrl);
   }
